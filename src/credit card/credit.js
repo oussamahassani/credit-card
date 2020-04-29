@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import Anime, {anime} from 'react-anime';
 import './credit.css'
-import Titre from './titre'
+ import Titre from './NewTitre'
+import TestProps from './Backcard';
+import Frontcard from './Frontcard';
 export class credit extends Component {
 
     constructor () {
@@ -18,15 +20,20 @@ export class credit extends Component {
           }}
         
      nameChange(n) {
-      const  abcd = /^[a-zA-Z \s]{1,22}$/ ;
+      const  abcd = /^[a-zA-Z \s]{1,20}$/g ;
       const  a =  n.target.value ;
-      abcd.test(a) ? this.setState({ name : a  })  : alert ("utliser que des letre") 
+      abcd.test(a) ? this.setState({ name : a.toUpperCase()  })  : alert ("utliser que des letres") 
      }
     numberChange(e) {
 
-        const  numb = /[0-9]$/ 
-        const  a =  e.target.value ;
-        numb.test(a) ?  this.setState({ number : a.replace(/(\d{4})/g, '$1  - ').replace(/(-\s+$)/,'') })  :alert ("utliser que des chifre")   
+       
+
+        this.setState({ number : "***************"});
+         const a =  e.target.value ;
+        if (a.length>1)
+        {
+          const  numb = /(\d){1,15}$/g 
+        numb.test(a) ?  this.setState({ number : a.replace(/(\d{4})/g, '$1  - ').replace(/(-\s+$)/,'') })  : alert ("utliser que des chifre")   
         switch (this.state.number[0] ) {
                 case "4":                       
             this.state.typecarte = "Visa"
@@ -41,17 +48,16 @@ export class credit extends Component {
                  break;
                  case "3":
              this.state.typecarte ="discover"
+             this.cardfrontt.current.style.backgroundImage=" url('https://www.psdgraphics.com/file/world-map-background.jpg')";
                   break;
                 default:
                     this.state.typecarte ="inconuues"
-           this.cardfrontt.current.style.backgroundImage=" url('https://www.psdgraphics.com/file/world-map-background.jpg')";
+          
               }
-               let chaine = this.state.number;
-               console.log(chaine.length);
-             
-
-               
-               
+            }
+            const  numb = /(\d){1,15}$/g
+               console.log(a.length);
+               numb.test(this.state.number) ? console.log("testvrais") : this.state.number= " "
                    }
                  
      monthChange(e) {
@@ -62,12 +68,14 @@ export class credit extends Component {
      let  day = a.slice(0, 2)
      let  anner = a.slice(2, 4)
      console.log(anner)
-      if (day < 20 )
+      if (day >31 | anner < 19 )
       {
+      
+      
       console.log("anner infeireur")
       this.setState({ month : "xx"})
       }
-      else
+      else 
       {
 
        this.setState({ month : a.replace(/(\d{2})/g, '$1 \\').replace(/(\\+$)/,'')}) 
@@ -78,10 +86,21 @@ export class credit extends Component {
      
                  }
     ccvChange(e) {
-             this.setState({
-                ccv: e.target.value
-                    });
-                 }
+      const  numb = /^[0-9]{1,4}$/ 
+let   a =  e.target.value ;
+if (numb.test(a)) 
+    {    
+       this.setState({
+       ccv: a
+        });
+      }
+        else
+             {
+        alert("merci de saisir un nombre ")
+        this.setState({
+          ccv: " " })
+             }
+  }
      flipCard () {
          anime({
          targets: ".credit-card-inner",
@@ -98,36 +117,24 @@ export class credit extends Component {
              easing: "linear"
                     });
                   };
+
+     
     render() {
+      const {number, name , month , ccv , typecarte} = this.state;
         return (
             <>
-           <Titre />
-
+                      <Titre/>
+              
               <form>
               <div className="container">
               <div className="credit-card">
-              <div className="credit-card-inner">
-              <div className="credit-card-front" ref={this.cardfrontt}>
-               <div>{this.state.typecarte}</div>
-               <br/><br/><br/><br/>
-               <div className="card-number">{this.state.number}</div>
-        <div className="card-name"> {this.state.name}</div>
-       
-
-              <div className="card-expiration">{this.state.month}
-              </div>
-
-          
-            </div>
-            <div className="credit-card-back">
-              <div className="card-stripe" />
-              <div className="card-sig-container">
-            
-              
-              </div>
-              <span className="credits">cvv</span>
-               <p className="credits">{this.state.ccv}</p>
-            </div>
+              <div className="credit-card-inner">    
+               <>  
+               <div className="credit-card-front" ref={this.cardfrontt}>
+                <Frontcard typecarte={typecarte} number= {number}  name= {name}  month={month}/>
+                </div>
+                </>
+            <TestProps cvs={ccv}/>
           </div>
         </div>
                 <div className="margin" style={{ display: "flex" }}>
@@ -139,7 +146,7 @@ export class credit extends Component {
           <label className="input-label">Votre Nom</label>
           <input  type="text"  placeholder="Enter Votre nom"  onChange={e => this. nameChange(e)} 
            
-           className="text-input"   maxLength="35"  />
+           className="text-input"   maxLength="20"  />
            </div>
            </div>
 
